@@ -3,15 +3,25 @@ import sys
 import tkinter as tk
 import requests
 
-api_url = "https://localhost:7180/customer"
-
+api_url = "https://localhost:7180/customer/"
+#Define action event for when the test button is clicked
 def testButtonAction():
     #Send a get request to the API to get all customers, if the API is running and responds appropriately
     #we should receive a 200 response
-    response = requests.get("https://localhost:7180/customer/GetAllCustomers", verify=False)
+    response = requests.get(api_url + "GetAllCustomers", verify=False)
     #if an OK response is received, show the rest of the controls
     if(response.status_code == 200):
         print(f'API running, show buttons')
+        testButton.setVisible(False)
+        getAllButton.setVisible(True)
+        textbox.setVisible(True)
+        
+def getAllButtonAction():
+    response = requests.get(api_url + "GetAllCustomers", verify=False)
+    if(response.status_code == 200):
+        response = response.json()
+        textbox.append(f"{response}")
+        
 
 #Create instance of QApplication
 app = QApplication([])
@@ -40,7 +50,18 @@ testButton.setText("Test API connectivity")
 #move the starting point to the center of the screen then subtract the width and height of the button
 testButton.move(int(1280/2) - testButton.size().width(), int(960/2) - testButton.size().height())
 testButton.clicked.connect(testButtonAction)
-
+#Create button to send a get all request
+getAllButton = QPushButton(mainMenu)
+getAllButton.setText("Get all customers")
+getAllButton.move(10,10)
+getAllButton.setVisible(False)
+getAllButton.clicked.connect(getAllButtonAction)
+#Create text box to display text in
+textbox = QTextEdit(mainMenu)
+textbox.move(int(1280/2),0)
+textbox.resize((int(1280/2) - 10),960 - 10)
+textbox.setVisible(False)
+textbox.setReadOnly(True)
 #Add widget to window for display
 window.addWidget(mainMenu)
 window.setCurrentWidget(mainMenu)
