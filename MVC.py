@@ -17,6 +17,8 @@ def testButtonAction():
         textbox.setVisible(True)
         nameInputBox.setVisible(True)
         getByNameButton.setVisible(True)
+        numberInputBox.setVisible(True)
+        getByNumberButton.setVisible(True)
         
 def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
@@ -29,7 +31,13 @@ def getByNameAction():
     if(response.status_code == 200):
         response = response.json()
         textbox.append(f"{response}")
-    
+        
+def getByNumberAction():
+    response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=False)
+    if(response.status_code == 200):
+        response = response.json()
+        textbox.append(f"{response}")
+
 
 #Create instance of QApplication
 app = QApplication([])
@@ -74,6 +82,15 @@ getByNameButton.move((nameInputBox.size().width() * 2) + 30,70)
 getByNameButton.setText("Get by name")
 getByNameButton.setVisible(False)
 getByNameButton.clicked.connect(getByNameAction)
+#Create a text line editor to take phone number of customer
+numberInputBox = QLineEdit(mainMenu)
+numberInputBox.move(10,120)
+numberInputBox.setVisible(False)
+getByNumberButton = QPushButton(mainMenu)
+getByNumberButton.move((numberInputBox.size().width() * 2) + 30,120)
+getByNumberButton.setText("Get by number")
+getByNumberButton.setVisible(False)
+getByNumberButton.clicked.connect(getByNumberAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
