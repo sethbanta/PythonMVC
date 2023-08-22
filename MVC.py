@@ -15,6 +15,8 @@ def testButtonAction():
         testButton.setVisible(False)
         getAllButton.setVisible(True)
         textbox.setVisible(True)
+        nameInputBox.setVisible(True)
+        getByNameButton.setVisible(True)
         
 def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
@@ -22,6 +24,12 @@ def getAllButtonAction():
         response = response.json()
         textbox.append(f"{response}")
         
+def getByNameAction():
+    response = requests.get(api_url + "GetCustomerByName/" + nameInputBox.text(), verify=False)
+    if(response.status_code == 200):
+        response = response.json()
+        textbox.append(f"{response}")
+    
 
 #Create instance of QApplication
 app = QApplication([])
@@ -56,6 +64,16 @@ getAllButton.setText("Get all customers")
 getAllButton.move(10,10)
 getAllButton.setVisible(False)
 getAllButton.clicked.connect(getAllButtonAction)
+#Create a text line editor to take input as well as a get customer by name button
+nameInputBox = QLineEdit(mainMenu)
+nameInputBox.move(10,70)
+nameInputBox.setVisible(False)
+#text boxes and buttons arent the same, tried resizing them several times and they just look worse lol
+getByNameButton = QPushButton(mainMenu)
+getByNameButton.move((nameInputBox.size().width() * 2) + 30,70)
+getByNameButton.setText("Get by name")
+getByNameButton.setVisible(False)
+getByNameButton.clicked.connect(getByNameAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
