@@ -19,6 +19,8 @@ def testButtonAction():
         getByNameButton.setVisible(True)
         numberInputBox.setVisible(True)
         getByNumberButton.setVisible(True)
+        loginText.setVisible(True)
+        loginButton.setVisible(True)
         
 def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
@@ -37,7 +39,17 @@ def getByNumberAction():
     if(response.status_code == 200):
         response = response.json()
         textbox.append(f"{response}")
+    else:
+        textbox.append(f"No data found, or a bad request was sent. Please try again")
 
+def loginButtonAction():
+    response = requests.get(api_url + "Login/" + loginText.text(), verify=False)
+    if(response.status_code == 204):
+        textbox.append(f"Login successful")
+        loginButton.setVisible(False)
+        loginText.setVisible(False)
+    elif(response.status_code == 404):
+        textbox.append(f"Login failed")
 
 #Create instance of QApplication
 app = QApplication([])
@@ -91,6 +103,16 @@ getByNumberButton.move((numberInputBox.size().width() * 2) + 30,120)
 getByNumberButton.setText("Get by number")
 getByNumberButton.setVisible(False)
 getByNumberButton.clicked.connect(getByNumberAction)
+#Create text box and button to log in
+loginText = QLineEdit(mainMenu)
+loginText.move(200,12)
+loginText.resize(300,30)
+loginText.setVisible(False)
+loginButton = QPushButton(mainMenu)
+loginButton.move(500,10)
+loginButton.setText("Log in")
+loginButton.setVisible(False)
+loginButton.clicked.connect(loginButtonAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
