@@ -81,18 +81,28 @@ def showMasterControls():
     updateByNameButton.setVisible(True)
     updateByNumberButton.setVisible(True)
     addCustomerButton.setVisible(True)
+    deleteCustomerButton.setVisible(True)
     
 def updateByNameAction():
+    hideToggledControls()
     showControls()
     toggledUpdateByNameButton.setVisible(True)
 
 def updateByNumberAction():
+    hideToggledControls()
     showControls()
     toggledUpdateByNumberButton.setVisible(True)
     
 def addUserAction():
+    hideToggledControls()
     showControls()
     toggledAddButton.setVisible(True)
+    
+def deleteUserAction():
+    hideToggledControls()
+    toggledNameLabel.setVisible(True)
+    toggledNameText.setVisible(True)
+    toggledDeleteButton.setVisible(True)
     
 def toggledUpdateByNameAction():
     topost = {
@@ -142,11 +152,25 @@ def toggledAddAction():
         toggledAddButton.setVisible(False)
         clearToggledText()
 
+def toggledDeleteAction():
+    response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify=False)
+    if(response.status_code == 204):
+        textbox.append("Deleted")
+        hideControls()
+        toggledDeleteButton.setVisible(False)
+        clearToggledText()
+
 def clearToggledText():
     toggledNameText.setText("")
     toggledNumberText.setText("")
     toggledAgeText.setText("")
     toggledPizzaText.setText("")
+    
+def hideToggledControls():
+    toggledUpdateByNameButton.setVisible(False)
+    toggledUpdateByNumberButton.setVisible(False)
+    toggledAddButton.setVisible(False)
+    toggledDeleteButton.setVisible(False)
     
 #Create instance of QApplication
 app = QApplication([])
@@ -228,6 +252,12 @@ addCustomerButton.move(updateByNameButton.size().width() * 4 - 30,180)
 addCustomerButton.setText("Add customer")
 addCustomerButton.setVisible(False)
 addCustomerButton.clicked.connect(addUserAction)
+#Delete customer button controls
+deleteCustomerButton = QPushButton(mainMenu)
+deleteCustomerButton.move(updateByNameButton.size().width() * 5 + 20,180)
+deleteCustomerButton.setText("Delete")
+deleteCustomerButton.setVisible(False)
+deleteCustomerButton.clicked.connect(deleteUserAction)
 #General toggled update controls
 toggledNameText = QLineEdit(mainMenu)
 toggledNameText.move((nameInputBox.size().width() * 2) + 30, 300)
@@ -272,6 +302,11 @@ toggledAddButton.setText("Add new user")
 toggledAddButton.move((nameInputBox.size().width()) + 60, 460)
 toggledAddButton.setVisible(False)
 toggledAddButton.clicked.connect(toggledAddAction)
+toggledDeleteButton = QPushButton(mainMenu)
+toggledDeleteButton.setText("Delete (serious)")
+toggledDeleteButton.move((nameInputBox.size().width() * 2) + 30, 340)
+toggledDeleteButton.setVisible(False)
+toggledDeleteButton.clicked.connect(toggledDeleteAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
