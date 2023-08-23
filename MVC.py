@@ -79,11 +79,16 @@ def hideControls():
 def showMasterControls():
     #TODO make method show all update related controls i.e. user logs in to see update add delete toggles
     updateByNameButton.setVisible(True)
+    updateByNumberButton.setVisible(True)
     
 def updateByNameAction():
     showControls()
     toggledUpdateByNameButton.setVisible(True)
 
+def updateByNumberAction():
+    showControls()
+    toggledUpdateByNumberButton.setVisible(True)
+    
 def toggledUpdateByNameAction():
     topost = {
         "Name": toggledNameText.text(),
@@ -91,7 +96,6 @@ def toggledUpdateByNameAction():
         "Age": int(toggledAgeText.text()),
         "FavoritePizza": toggledPizzaText.text()
         }
-    print(f'{topost}')
     headers =  {"Content-Type":"application/json"}
     response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameText.text(), json=topost, verify=False)
     #If we are returned no content, then the update SHOULD have applied
@@ -99,7 +103,29 @@ def toggledUpdateByNameAction():
         textbox.append("Updated")
         hideControls()
         toggledUpdateByNameButton.setVisible(False)
+        clearToggledText()
         
+def toggledUpdateByNumberAction():
+    topost = {
+        "Name": toggledNameText.text(),
+        "PhoneNumber": int(toggledNumberText.text()),
+        "Age": int(toggledAgeText.text()),
+        "FavoritePizza": toggledPizzaText.text()
+        }
+    headers =  {"Content-Type":"application/json"}
+    response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberText.text(), json=topost, verify=False)
+    #If we are returned no content, then the update SHOULD have applied
+    if(response.status_code == 204):
+        textbox.append("Updated")
+        hideControls()
+        toggledUpdateByNumberButton.setVisible(False)
+        clearToggledText()
+        
+def clearToggledText():
+    toggledNameText.setText("")
+    toggledNumberText.setText("")
+    toggledAgeText.setText("")
+    toggledPizzaText.setText("")
     
 #Create instance of QApplication
 app = QApplication([])
@@ -169,6 +195,12 @@ updateByNameButton.move(10,180)
 updateByNameButton.setText("Update by name")
 updateByNameButton.setVisible(False)
 updateByNameButton.clicked.connect(updateByNameAction)
+#Update by number controls
+updateByNumberButton = QPushButton(mainMenu)
+updateByNumberButton.move(updateByNameButton.size().width() * 2,180)
+updateByNumberButton.setText("Update by number")
+updateByNumberButton.setVisible(False)
+updateByNumberButton.clicked.connect(updateByNumberAction)
 #General toggled update controls
 toggledNameText = QLineEdit(mainMenu)
 toggledNameText.move((nameInputBox.size().width() * 2) + 30, 300)
@@ -203,6 +235,11 @@ toggledUpdateByNameButton.setText("Update by name")
 toggledUpdateByNameButton.move((nameInputBox.size().width()) + 60, 460)
 toggledUpdateByNameButton.setVisible(False)
 toggledUpdateByNameButton.clicked.connect(toggledUpdateByNameAction)
+toggledUpdateByNumberButton = QPushButton(mainMenu)
+toggledUpdateByNumberButton.setText("Update by number")
+toggledUpdateByNumberButton.move((nameInputBox.size().width()) + 60, 460)
+toggledUpdateByNumberButton.setVisible(False)
+toggledUpdateByNumberButton.clicked.connect(toggledUpdateByNumberAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
