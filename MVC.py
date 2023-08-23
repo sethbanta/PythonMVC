@@ -80,6 +80,7 @@ def showMasterControls():
     #TODO make method show all update related controls i.e. user logs in to see update add delete toggles
     updateByNameButton.setVisible(True)
     updateByNumberButton.setVisible(True)
+    addCustomerButton.setVisible(True)
     
 def updateByNameAction():
     showControls()
@@ -88,6 +89,10 @@ def updateByNameAction():
 def updateByNumberAction():
     showControls()
     toggledUpdateByNumberButton.setVisible(True)
+    
+def addUserAction():
+    showControls()
+    toggledAddButton.setVisible(True)
     
 def toggledUpdateByNameAction():
     topost = {
@@ -120,7 +125,23 @@ def toggledUpdateByNumberAction():
         hideControls()
         toggledUpdateByNumberButton.setVisible(False)
         clearToggledText()
-        
+
+def toggledAddAction():
+    topost = {
+        "Name": toggledNameText.text(),
+        "PhoneNumber": int(toggledNumberText.text()),
+        "Age": int(toggledAgeText.text()),
+        "FavoritePizza": toggledPizzaText.text()
+        }
+    headers =  {"Content-Type":"application/json"}
+    response = requests.post(api_url + "NewCustomer", json=topost, verify=False)
+    #If we are returned 201, that means the content was created
+    if(response.status_code == 201):
+        textbox.append("Added")
+        hideControls()
+        toggledAddButton.setVisible(False)
+        clearToggledText()
+
 def clearToggledText():
     toggledNameText.setText("")
     toggledNumberText.setText("")
@@ -197,10 +218,16 @@ updateByNameButton.setVisible(False)
 updateByNameButton.clicked.connect(updateByNameAction)
 #Update by number controls
 updateByNumberButton = QPushButton(mainMenu)
-updateByNumberButton.move(updateByNameButton.size().width() * 2,180)
+updateByNumberButton.move(updateByNameButton.size().width() * 2 - 20,180)
 updateByNumberButton.setText("Update by number")
 updateByNumberButton.setVisible(False)
 updateByNumberButton.clicked.connect(updateByNumberAction)
+#Add customer button controls
+addCustomerButton = QPushButton(mainMenu)
+addCustomerButton.move(updateByNameButton.size().width() * 4 - 30,180)
+addCustomerButton.setText("Add customer")
+addCustomerButton.setVisible(False)
+addCustomerButton.clicked.connect(addUserAction)
 #General toggled update controls
 toggledNameText = QLineEdit(mainMenu)
 toggledNameText.move((nameInputBox.size().width() * 2) + 30, 300)
@@ -240,6 +267,11 @@ toggledUpdateByNumberButton.setText("Update by number")
 toggledUpdateByNumberButton.move((nameInputBox.size().width()) + 60, 460)
 toggledUpdateByNumberButton.setVisible(False)
 toggledUpdateByNumberButton.clicked.connect(toggledUpdateByNumberAction)
+toggledAddButton = QPushButton(mainMenu)
+toggledAddButton.setText("Add new user")
+toggledAddButton.move((nameInputBox.size().width()) + 60, 460)
+toggledAddButton.setVisible(False)
+toggledAddButton.clicked.connect(toggledAddAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
