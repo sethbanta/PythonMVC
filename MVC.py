@@ -22,20 +22,23 @@ def testButtonAction():
         getByNumberButton.setVisible(True)
         loginText.setVisible(True)
         loginButton.setVisible(True)
-        
+
+#Function to call get all request when the get all button is clicked        
 def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
     if(response.status_code == 200):
         response = response.json()
         textbox.append(f"{response}")
-        
+
+#Function to call a get by name request when the get by name button is clicked    
 def getByNameAction():
     response = requests.get(api_url + "GetCustomerByName/" + nameInputBox.text(), verify=False)
     if(response.status_code == 200):
         response = response.json()
         textbox.append(f"{response}")
         #Rob was here
-        
+
+#Function to call a get by number request when the get by number button is clicked
 def getByNumberAction():
     response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=False)
     if(response.status_code == 200):
@@ -44,6 +47,8 @@ def getByNumberAction():
     else:
         textbox.append(f"No data found, or a bad request was sent. Please try again")
 
+#Function to call a login request when the log in button is clicked
+#this is done by sending a get request with a guid
 def loginButtonAction():
     response = requests.get(api_url + "Login/" + loginText.text(), verify=False)
     if(response.status_code == 204):
@@ -54,9 +59,8 @@ def loginButtonAction():
     elif(response.status_code == 404):
         textbox.append(f"Login failed")
 
+#Function that makes all update related fields visible
 def showControls():
-    #TODO make method show all toggled update related controls i.e. after the user clicks update by name
-    print(f"placeholder")
     toggledNameLabel.setVisible(True)
     toggledNameText.setVisible(True)
     toggledNumberLabel.setVisible(True)
@@ -65,7 +69,8 @@ def showControls():
     toggledAgeText.setVisible(True)
     toggledPizzaLabel.setVisible(True)
     toggledPizzaText.setVisible(True)
-    
+ 
+#Function that hides all update related fields   
 def hideControls():
     toggledNameLabel.setVisible(False)
     toggledNameText.setVisible(False)
@@ -75,35 +80,42 @@ def hideControls():
     toggledAgeText.setVisible(False)
     toggledPizzaLabel.setVisible(False)
     toggledPizzaText.setVisible(False)
-        
+
+#Function that shows "master" controls such as update by name, number, etc..
 def showMasterControls():
     #TODO make method show all update related controls i.e. user logs in to see update add delete toggles
     updateByNameButton.setVisible(True)
     updateByNumberButton.setVisible(True)
     addCustomerButton.setVisible(True)
     deleteCustomerButton.setVisible(True)
-    
+
+#Function to make update by name related fields visible for the user to make requests with  
 def updateByNameAction():
     hideToggledControls()
     showControls()
     toggledUpdateByNameButton.setVisible(True)
 
+#Function to make update by number related fields visible for the user to make requests with
 def updateByNumberAction():
     hideToggledControls()
     showControls()
     toggledUpdateByNumberButton.setVisible(True)
-    
+
+#Function to make add user related fields visible for the user to make requests with
 def addUserAction():
     hideToggledControls()
     showControls()
     toggledAddButton.setVisible(True)
-    
+
+#Function to make delete user related fields visible for the user to make requests with
 def deleteUserAction():
     hideToggledControls()
     toggledNameLabel.setVisible(True)
     toggledNameText.setVisible(True)
     toggledDeleteButton.setVisible(True)
-    
+
+#Function to gather data from update related fields into json format then send a put request
+#if it is successful (204 -- No Content) then it lets the user know an update was performed
 def toggledUpdateByNameAction():
     topost = {
         "Name": toggledNameText.text(),
@@ -119,7 +131,9 @@ def toggledUpdateByNameAction():
         hideControls()
         toggledUpdateByNameButton.setVisible(False)
         clearToggledText()
-        
+
+#Function to gather data from update related fields into json format then send a put request
+#if it is successful (204 -- No Content) then it lets the user know an update was performed     
 def toggledUpdateByNumberAction():
     topost = {
         "Name": toggledNameText.text(),
@@ -136,6 +150,8 @@ def toggledUpdateByNumberAction():
         toggledUpdateByNumberButton.setVisible(False)
         clearToggledText()
 
+#Function to gather data from update related fields into json format then send a post request
+#if it is successful (201 -- Created) then it lets the user know an update was performed
 def toggledAddAction():
     topost = {
         "Name": toggledNameText.text(),
@@ -152,6 +168,7 @@ def toggledAddAction():
         toggledAddButton.setVisible(False)
         clearToggledText()
 
+#Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
     response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify=False)
     if(response.status_code == 204):
@@ -160,12 +177,15 @@ def toggledDeleteAction():
         toggledDeleteButton.setVisible(False)
         clearToggledText()
 
+#Function to clear the text boxes for the update related areas, this is generally called after
+#a function is performed so that next time it is used it looks new again
 def clearToggledText():
     toggledNameText.setText("")
     toggledNumberText.setText("")
     toggledAgeText.setText("")
     toggledPizzaText.setText("")
-    
+
+#Function to make update related fields not visible to the user anymore    
 def hideToggledControls():
     toggledUpdateByNameButton.setVisible(False)
     toggledUpdateByNumberButton.setVisible(False)
