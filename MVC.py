@@ -23,7 +23,8 @@ def testButtonAction():
         getByNumberButton.setVisible(True)
         loginText.setVisible(True)
         loginButton.setVisible(True)
-
+        clearConsoleButton.setVisible(True)
+        
 #Function to call get all request when the get all button is clicked        
 def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
@@ -197,6 +198,10 @@ def importAction():
     response = requests.get(api_url + "import", verify=False)
     if(response.status_code == 204):
         textbox.append("Imported")
+
+#Function to clear text in the console
+def clearConsoleAction():
+    textbox.setText("")
     
 #Function to clear the text boxes for the update related areas, this is generally called after
 #a function is performed so that next time it is used it looks new again
@@ -359,6 +364,12 @@ importButton.setText("Import")
 importButton.move((int(1280/2) - 150), 850)
 importButton.setVisible(False)
 importButton.clicked.connect(importAction)
+#Clear console button
+clearConsoleButton = QPushButton(mainMenu)
+clearConsoleButton.setText("Clear")
+clearConsoleButton.move((int(1280/2) - 150), 900)
+clearConsoleButton.setVisible(False)
+clearConsoleButton.clicked.connect(clearConsoleAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
