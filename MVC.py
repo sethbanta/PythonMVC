@@ -30,7 +30,11 @@ def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
     if(response.status_code == 200):
         response = response.json()
-        textbox.append(f"{response}")
+        for customer in response:
+            strReal = str(customer)
+            splitOutput = strReal.split("'")
+            textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
+
 
 #Function to call a get by name request when the get by name button is clicked    
 def getByNameAction():
@@ -189,7 +193,6 @@ def exportAction():
     if(response.status_code == 204):
         textbox.append("Exported")
     response = requests.get(api_url + "GetAllCustomers", verify=False)
-    output = response.json()
     with open("SavedList.json", "w") as outfile:
         outfile.write(str(output))
     
