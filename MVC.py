@@ -90,6 +90,7 @@ def showMasterControls():
     addCustomerButton.setVisible(True)
     deleteCustomerButton.setVisible(True)
     exportButton.setVisible(True)
+    importButton.setVisible(True)
 
 #Function to make update by name related fields visible for the user to make requests with  
 def updateByNameAction():
@@ -183,7 +184,6 @@ def toggledDeleteAction():
 #exports a json file in the local directory where this program runs and where the API runs
 #basically server and client side
 def exportAction():
-    print(f'placeholder')
     response = requests.get(api_url + "save", verify=False)
     if(response.status_code == 204):
         textbox.append("Exported")
@@ -192,6 +192,11 @@ def exportAction():
     with open("SavedList.json", "w") as outfile:
         outfile.write(str(output))
     
+#Sends a request to the API to load information from JSON file into the API    
+def importAction():
+    response = requests.get(api_url + "import", verify=False)
+    if(response.status_code == 204):
+        textbox.append("Imported")
     
 #Function to clear the text boxes for the update related areas, this is generally called after
 #a function is performed so that next time it is used it looks new again
@@ -349,6 +354,11 @@ exportButton.setText("Export")
 exportButton.move((int(1280/2) - 150), 800)
 exportButton.setVisible(False)
 exportButton.clicked.connect(exportAction)
+importButton = QPushButton(mainMenu)
+importButton.setText("Import")
+importButton.move((int(1280/2) - 150), 850)
+importButton.setVisible(False)
+importButton.clicked.connect(importAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
