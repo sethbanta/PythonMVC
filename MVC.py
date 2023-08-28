@@ -30,6 +30,8 @@ def getAllButtonAction():
     response = requests.get(api_url + "GetAllCustomers", verify=False)
     if(response.status_code == 200):
         response = response.json()
+        #for each customer in the response, split by ' then append to the text box the information
+        #the phone number and age responses contain a : at the beginning and , at the end which is gets stripped
         for customer in response:
             strReal = str(customer)
             splitOutput = strReal.split("'")
@@ -41,7 +43,10 @@ def getByNameAction():
     response = requests.get(api_url + "GetCustomerByName/" + nameInputBox.text(), verify=False)
     if(response.status_code == 200):
         response = response.json()
-        textbox.append(f"{response}")
+        #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
+        strReal = str(response)
+        splitOutput = strReal.split("'")
+        textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
         #Rob was here
 
 #Function to call a get by number request when the get by number button is clicked
@@ -49,7 +54,10 @@ def getByNumberAction():
     response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=False)
     if(response.status_code == 200):
         response = response.json()
-        textbox.append(f"{response}")
+        #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
+        strReal = str(response)
+        splitOutput = strReal.split("'")
+        textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
     else:
         textbox.append(f"No data found, or a bad request was sent. Please try again")
 
@@ -89,7 +97,6 @@ def hideControls():
 
 #Function that shows "master" controls such as update by name, number, etc..
 def showMasterControls():
-    #TODO make method show all update related controls i.e. user logs in to see update add delete toggles
     updateByNameButton.setVisible(True)
     updateByNumberButton.setVisible(True)
     addCustomerButton.setVisible(True)
@@ -193,6 +200,7 @@ def exportAction():
     if(response.status_code == 204):
         textbox.append("Exported")
     response = requests.get(api_url + "GetAllCustomers", verify=False)
+    output = response.json()
     with open("SavedList.json", "w") as outfile:
         outfile.write(str(output))
     
