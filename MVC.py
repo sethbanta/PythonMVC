@@ -3,6 +3,7 @@ import sys
 import tkinter as tk
 import requests
 import json
+import csv
 
 api_url = "https://localhost:7180/customer/"
 #Define action event for when the test button is clicked
@@ -88,6 +89,7 @@ def showMasterControls():
     updateByNumberButton.setVisible(True)
     addCustomerButton.setVisible(True)
     deleteCustomerButton.setVisible(True)
+    exportButton.setVisible(True)
 
 #Function to make update by name related fields visible for the user to make requests with  
 def updateByNameAction():
@@ -177,6 +179,20 @@ def toggledDeleteAction():
         toggledDeleteButton.setVisible(False)
         clearToggledText()
 
+#Sends a request to the API to save information to JSON
+#exports a json file in the local directory where this program runs and where the API runs
+#basically server and client side
+def exportAction():
+    print(f'placeholder')
+    response = requests.get(api_url + "save", verify=False)
+    if(response.status_code == 204):
+        textbox.append("Exported")
+    response = requests.get(api_url + "GetAllCustomers", verify=False)
+    output = response.json()
+    with open("SavedList.json", "w") as outfile:
+        outfile.write(str(output))
+    
+    
 #Function to clear the text boxes for the update related areas, this is generally called after
 #a function is performed so that next time it is used it looks new again
 def clearToggledText():
@@ -327,6 +343,12 @@ toggledDeleteButton.setText("Delete (serious)")
 toggledDeleteButton.move((nameInputBox.size().width() * 2) + 30, 340)
 toggledDeleteButton.setVisible(False)
 toggledDeleteButton.clicked.connect(toggledDeleteAction)
+#Import and export controls
+exportButton = QPushButton(mainMenu)
+exportButton.setText("Export")
+exportButton.move((int(1280/2) - 150), 800)
+exportButton.setVisible(False)
+exportButton.clicked.connect(exportAction)
 #Create text box to display text in
 textbox = QTextEdit(mainMenu)
 textbox.move(int(1280/2),0)
