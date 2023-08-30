@@ -86,6 +86,8 @@ def showControls():
  
 #Function that hides all update related fields   
 def hideControls():
+    toggledNameToUpdate.setVisible(False)
+    toggledNameToUpdateLabel.setVisible(False)
     toggledNameLabel.setVisible(False)
     toggledNameText.setVisible(False)
     toggledNumberLabel.setVisible(False)
@@ -109,6 +111,8 @@ def updateByNameAction():
     hideToggledControls()
     showControls()
     toggledUpdateByNameButton.setVisible(True)
+    toggledNameToUpdate.setVisible(True)
+    toggledNameToUpdateLabel.setVisible(True)
 
 #Function to make update by number related fields visible for the user to make requests with
 def updateByNumberAction():
@@ -139,7 +143,7 @@ def toggledUpdateByNameAction():
         "FavoritePizza": toggledPizzaText.text()
         }
     headers =  {"Content-Type":"application/json"}
-    response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameText.text(), json=topost, verify=False)
+    response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=False)
     #If we are returned no content, then the update SHOULD have applied
     if(response.status_code == 204):
         textbox.append("Updated")
@@ -221,6 +225,7 @@ def clearToggledText():
     toggledNumberText.setText("")
     toggledAgeText.setText("")
     toggledPizzaText.setText("")
+    toggledNameToUpdate.setText("")
 
 #Function to make update related fields not visible to the user anymore    
 def hideToggledControls():
@@ -228,6 +233,8 @@ def hideToggledControls():
     toggledUpdateByNumberButton.setVisible(False)
     toggledAddButton.setVisible(False)
     toggledDeleteButton.setVisible(False)
+    toggledNameToUpdateLabel.setVisible(False)
+    toggledNameToUpdate.setVisible(False)
     
 #Create instance of QApplication
 app = QApplication([])
@@ -316,6 +323,13 @@ deleteCustomerButton.setText("Delete")
 deleteCustomerButton.setVisible(False)
 deleteCustomerButton.clicked.connect(deleteUserAction)
 #General toggled update controls
+toggledNameToUpdate = QLineEdit(mainMenu)
+toggledNameToUpdate.move((nameInputBox.size().width() * 2) + 30, 260)
+toggledNameToUpdate.setVisible(False)
+toggledNameToUpdateLabel = QLabel(mainMenu)
+toggledNameToUpdateLabel.setText("Name to update:")
+toggledNameToUpdateLabel.move((nameInputBox.size().width()) - 37, 260)
+toggledNameToUpdateLabel.setVisible(False)
 toggledNameText = QLineEdit(mainMenu)
 toggledNameText.move((nameInputBox.size().width() * 2) + 30, 300)
 toggledNameText.setVisible(False)
