@@ -209,8 +209,15 @@ def exportAction():
         textbox.append("Exported")
     response = requests.get(api_url + "GetAllCustomers", verify=False)
     output = response.json()
+    #BigRob was here also
+    outputStr = str(output)
+    outputStr = outputStr.replace("[", "[\n")  
+    outputStr = outputStr.replace("{", "\t{\n")
+    outputStr = outputStr.replace(",", ",\n")
+    outputStr = outputStr.replace("}", "\n\t}")
+    outputStr = outputStr.replace("]", "\n]\n")
     with open("SavedList.json", "w") as outfile:
-        outfile.write(str(output))
+        outfile.write(str(outputStr))
     
 #Sends a request to the API to load information from JSON file into the API    
 def importAction():
