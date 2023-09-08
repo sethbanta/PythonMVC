@@ -111,10 +111,9 @@ def showMasterControls():
 #Function to make update by name related fields visible for the user to make requests with  
 def updateByNameAction():
     hideToggledControls()
-    showControls()
-    toggledUpdateByNameButton.setVisible(True)
     toggledNameToUpdate.setVisible(True)
     toggledNameToUpdateLabel.setVisible(True)
+    nameToUpdateGrabButton.setVisible(True)
 
 #Function to make update by number related fields visible for the user to make requests with
 def updateByNumberAction():
@@ -249,6 +248,24 @@ def hideToggledControls():
     toggledNumberToUpdate.setVisible(False)
     toggledNumberToUpdateLabel.setVisible(False)
     
+def nameGrabAction():
+    response = requests.get(api_url + "GetCustomerByName/" + toggledNameToUpdate.text(), verify=False)
+    if(response.status_code == 200):
+        response = response.json()
+        #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
+        strReal = str(response)
+        splitOutput = strReal.split("'")
+        toggledNameText.setText(f'{splitOutput[3]}')
+        toggledNumberText.setText(f"{splitOutput[6].strip(': ,')}")
+        toggledAgeText.setText(f"{splitOutput[8].strip(': ,')}")
+        toggledPizzaText.setText(f'{splitOutput[11]}')
+        showControls()
+        toggledUpdateByNameButton.setVisible(True)
+        nameToUpdateGrabButton.setVisible(False)
+        toggledNameToUpdate.setVisible(False)
+        toggledNameToUpdateLabel.setVisible(False)
+        #Rob was here
+    
 #Create instance of QApplication
 app = QApplication([])
 
@@ -343,6 +360,11 @@ toggledNameToUpdateLabel = QLabel(mainMenu)
 toggledNameToUpdateLabel.setText("Name to update:")
 toggledNameToUpdateLabel.move((nameInputBox.size().width()) - 37, 260)
 toggledNameToUpdateLabel.setVisible(False)
+nameToUpdateGrabButton = QPushButton(mainMenu)
+nameToUpdateGrabButton.setText("Grab")
+nameToUpdateGrabButton.setVisible(False)
+nameToUpdateGrabButton.move((nameInputBox.size().width() * 2) + 30, 300)
+nameToUpdateGrabButton.clicked.connect(nameGrabAction)
 toggledNumberToUpdate = QLineEdit(mainMenu)
 toggledNumberToUpdate.move((nameInputBox.size().width() * 2) + 30, 260)
 toggledNumberToUpdate.setVisible(False)
