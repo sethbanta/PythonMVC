@@ -132,6 +132,7 @@ def addUserAction():
 #Function to make delete user related fields visible for the user to make requests with
 def deleteUserAction():
     hideToggledControls()
+    hideControls()
     toggledNameLabel.setVisible(True)
     toggledNameText.setVisible(True)
     toggledDeleteButton.setVisible(True)
