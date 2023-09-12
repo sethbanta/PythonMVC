@@ -127,6 +127,7 @@ def updateByNumberAction():
 #Function to make add user related fields visible for the user to make requests with
 def addUserAction():
     hideToggledControls()
+    clearToggledText()
     showControls()
     toggledAddButton.setVisible(True)
 
@@ -137,6 +138,9 @@ def deleteUserAction():
     toggledNameLabel.setVisible(True)
     toggledNameText.setVisible(True)
     toggledDeleteButton.setVisible(True)
+    toggledDeleteNumberText.setVisible(True)
+    toggledDeleteNumberLabel.setVisible(True)
+    toggledDeleteNumberButton.setVisible(True)
 
 #Function to gather data from update related fields into json format then send a put request
 #if it is successful (204 -- No Content) then it lets the user know an update was performed
@@ -199,6 +203,18 @@ def toggledDeleteAction():
         textbox.append("Deleted")
         hideControls()
         toggledDeleteButton.setVisible(False)
+        clearToggledText()
+
+#Function to send a delete request after gathering which number to delete
+def toggledDeleteNumberAction():
+    response = requests.delete(api_url + "DeleteById/" + toggledDeleteNumberText.text(), verify=False)
+    if(response.status_code == 204):
+        textbox.append("Deleted")
+        hideControls()
+        toggledDeleteButton.setVisible(False)
+        toggledDeleteNumberText.setVisible(False)
+        toggledDeleteNumberLabel.setVisible(False)
+        toggledDeleteNumberButton.setVisible(False)
         clearToggledText()
 
 #Sends a request to the API to save information to JSON
@@ -444,6 +460,18 @@ toggledDeleteButton.setText("Delete (serious)")
 toggledDeleteButton.move((nameInputBox.size().width() * 2) + 30, 340)
 toggledDeleteButton.setVisible(False)
 toggledDeleteButton.clicked.connect(toggledDeleteAction)
+toggledDeleteNumberLabel = QLabel(mainMenu)
+toggledDeleteNumberLabel.move((nameInputBox.size().width()) + 39, 390)
+toggledDeleteNumberLabel.setText("Number:")
+toggledDeleteNumberLabel.setVisible(False)
+toggledDeleteNumberText = QLineEdit(mainMenu)
+toggledDeleteNumberText.move((nameInputBox.size().width() * 2) + 30, 390)
+toggledDeleteNumberText.setVisible(False)
+toggledDeleteNumberButton = QPushButton(mainMenu)
+toggledDeleteNumberButton.setText("Delete (serious)")
+toggledDeleteNumberButton.move((nameInputBox.size().width() * 2) + 30, 430)
+toggledDeleteNumberButton.setVisible(False)
+toggledDeleteNumberButton.clicked.connect(toggledDeleteNumberAction)
 #Import and export controls
 exportButton = QPushButton(mainMenu)
 exportButton.setText("Export")
