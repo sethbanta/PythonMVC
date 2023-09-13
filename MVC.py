@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 import sys
 import tkinter as tk
 import requests
@@ -6,6 +8,10 @@ import json
 import csv
 
 api_url = "https://localhost:7180/customer/"
+letterRegEx = QRegExp("[a-z-A-Z_ ]*")
+letterValidator = QRegExpValidator(letterRegEx)
+numberRegEx = QRegExp("[0-9_]+")
+numberValidator = QRegExpValidator(numberRegEx)
 #Define action event for when the test button is clicked
 def testButtonAction():
     #Send a get request to the API to get all customers, if the API is running and responds appropriately
@@ -162,7 +168,6 @@ def toggledUpdateByNameAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=False)
-    print(f'{response.status_code}')
     #If we are returned no content, then the update SHOULD have applied
     if(response.status_code == 204):
         textbox.append("Updated")
@@ -181,7 +186,6 @@ def toggledUpdateByNumberAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify=False)
-    print(f"{response.status_code}")
     #If we are returned no content, then the update SHOULD have applied
     if(response.status_code == 204):
         textbox.append("Updated")
@@ -200,7 +204,6 @@ def toggledAddAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.post(api_url + "NewCustomer", json=topost, verify=False)
-    print(f"{response.status_code}")
     #If we are returned 201, that means the content was created
     if(response.status_code == 201):
         textbox.append("Added")
@@ -211,7 +214,6 @@ def toggledAddAction():
 #Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
     response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify=False)
-    print(f"{response.status_code}")
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
@@ -223,7 +225,6 @@ def toggledDeleteAction():
 #Function to send a delete request after gathering which number to delete
 def toggledDeleteNumberAction():
     response = requests.delete(api_url + "DeleteById/" + toggledDeleteNumberText.text(), verify=False)
-    print(f"{response.status_code}")
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
@@ -272,6 +273,9 @@ def clearToggledText():
     toggledAgeText.setText("")
     toggledPizzaText.setText("")
     toggledNameToUpdate.setText("")
+    toggledNumberToUpdate.setText("")
+    toggledNameToUpdate.setText("")
+    toggledDeleteNumberText.setText("")
 
 #Function to make update related fields not visible to the user anymore    
 def hideToggledControls():
@@ -360,6 +364,7 @@ getAllButton.clicked.connect(getAllButtonAction)
 nameInputBox = QLineEdit(mainMenu)
 nameInputBox.move(10,70)
 nameInputBox.setVisible(False)
+nameInputBox.setValidator(letterValidator)
 #text boxes and buttons arent the same, tried resizing them several times and they just look worse lol
 getByNameButton = QPushButton(mainMenu)
 getByNameButton.move((nameInputBox.size().width() * 2) + 30,70)
@@ -370,6 +375,7 @@ getByNameButton.clicked.connect(getByNameAction)
 numberInputBox = QLineEdit(mainMenu)
 numberInputBox.move(10,120)
 numberInputBox.setVisible(False)
+numberInputBox.setValidator(numberValidator)
 getByNumberButton = QPushButton(mainMenu)
 getByNumberButton.move((numberInputBox.size().width() * 2) + 30,120)
 getByNumberButton.setText("Get by number")
@@ -413,6 +419,7 @@ deleteCustomerButton.clicked.connect(deleteUserAction)
 toggledNameToUpdate = QLineEdit(mainMenu)
 toggledNameToUpdate.move((nameInputBox.size().width() * 2) + 30, 260)
 toggledNameToUpdate.setVisible(False)
+toggledNameToUpdate.setValidator(letterValidator)
 toggledNameToUpdateLabel = QLabel(mainMenu)
 toggledNameToUpdateLabel.setText("Name to update:")
 toggledNameToUpdateLabel.move((nameInputBox.size().width()) - 37, 260)
@@ -425,6 +432,7 @@ nameToUpdateGrabButton.clicked.connect(nameGrabAction)
 toggledNumberToUpdate = QLineEdit(mainMenu)
 toggledNumberToUpdate.move((nameInputBox.size().width() * 2) + 30, 260)
 toggledNumberToUpdate.setVisible(False)
+toggledNumberToUpdate.setValidator(numberValidator)
 toggledNumberToUpdateLabel = QLabel(mainMenu)
 toggledNumberToUpdateLabel.setText("Number to update:")
 toggledNumberToUpdateLabel.move((nameInputBox.size().width()) - 58, 260)
@@ -437,13 +445,17 @@ numberToUpdateGrabButton.clicked.connect(numberToUpdateAction)
 toggledNameText = QLineEdit(mainMenu)
 toggledNameText.move((nameInputBox.size().width() * 2) + 30, 300)
 toggledNameText.setVisible(False)
+toggledNameText.setValidator(letterValidator)
 toggledNumberText = QLineEdit(mainMenu)
 toggledNumberText.move((nameInputBox.size().width() * 2) + 30, 340)
 toggledNumberText.setVisible(False)
+toggledNumberText.setValidator(numberValidator)
 toggledAgeText = QLineEdit(mainMenu)
 toggledAgeText.move((nameInputBox.size().width() * 2) + 30, 380)
 toggledAgeText.setVisible(False)
+toggledAgeText.setValidator(numberValidator)
 toggledPizzaText = QLineEdit(mainMenu)
+toggledPizzaText.setValidator(letterValidator)
 toggledPizzaText.move((nameInputBox.size().width() * 2) + 30, 420)
 toggledPizzaText.setVisible(False)
 toggledNameLabel = QLabel(mainMenu)
@@ -489,6 +501,7 @@ toggledDeleteNumberLabel.setVisible(False)
 toggledDeleteNumberText = QLineEdit(mainMenu)
 toggledDeleteNumberText.move((nameInputBox.size().width() * 2) + 30, 390)
 toggledDeleteNumberText.setVisible(False)
+toggledDeleteNumberText.setValidator(numberValidator)
 toggledDeleteNumberButton = QPushButton(mainMenu)
 toggledDeleteNumberButton.setText("Delete (serious)")
 toggledDeleteNumberButton.move((nameInputBox.size().width() * 2) + 30, 430)
