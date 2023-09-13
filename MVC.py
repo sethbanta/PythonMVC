@@ -48,6 +48,8 @@ def getByNameAction():
         splitOutput = strReal.split("'")
         textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
         #Rob was here
+    elif(response.status_code == 204):
+        textbox.append("Customer not found")
 
 #Function to call a get by number request when the get by number button is clicked
 def getByNumberAction():
@@ -98,6 +100,12 @@ def hideControls():
     toggledPizzaText.setVisible(False)
     toggledNumberToUpdateLabel.setVisible(False)
     toggledNumberToUpdate.setVisible(False)
+    toggledDeleteNumberButton.setVisible(False)
+    toggledDeleteNumberLabel.setVisible(False)
+    toggledNameToUpdate.setVisible(False)
+    numberToUpdateGrabButton.setVisible(False)
+    nameToUpdateGrabButton.setVisible(False)
+    toggledDeleteNumberText.setVisible(False)
 
 #Function that shows "master" controls such as update by name, number, etc..
 def showMasterControls():
@@ -127,6 +135,7 @@ def updateByNumberAction():
 #Function to make add user related fields visible for the user to make requests with
 def addUserAction():
     hideToggledControls()
+    hideControls()
     clearToggledText()
     showControls()
     toggledAddButton.setVisible(True)
@@ -153,6 +162,7 @@ def toggledUpdateByNameAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=False)
+    print(f'{response.status_code}')
     #If we are returned no content, then the update SHOULD have applied
     if(response.status_code == 204):
         textbox.append("Updated")
@@ -171,6 +181,7 @@ def toggledUpdateByNumberAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify=False)
+    print(f"{response.status_code}")
     #If we are returned no content, then the update SHOULD have applied
     if(response.status_code == 204):
         textbox.append("Updated")
@@ -189,6 +200,7 @@ def toggledAddAction():
         }
     headers =  {"Content-Type":"application/json"}
     response = requests.post(api_url + "NewCustomer", json=topost, verify=False)
+    print(f"{response.status_code}")
     #If we are returned 201, that means the content was created
     if(response.status_code == 201):
         textbox.append("Added")
@@ -199,15 +211,19 @@ def toggledAddAction():
 #Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
     response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify=False)
+    print(f"{response.status_code}")
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
         toggledDeleteButton.setVisible(False)
         clearToggledText()
-
+    else:
+        textbox.append("Failed to delete customer")
+        
 #Function to send a delete request after gathering which number to delete
 def toggledDeleteNumberAction():
     response = requests.delete(api_url + "DeleteById/" + toggledDeleteNumberText.text(), verify=False)
+    print(f"{response.status_code}")
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
@@ -216,6 +232,8 @@ def toggledDeleteNumberAction():
         toggledDeleteNumberLabel.setVisible(False)
         toggledDeleteNumberButton.setVisible(False)
         clearToggledText()
+    else:
+        textbox.append("Failed to delete customer")
 
 #Sends a request to the API to save information to JSON
 #exports a json file in the local directory where this program runs and where the API runs
@@ -283,6 +301,8 @@ def nameGrabAction():
         toggledNameToUpdate.setVisible(False)
         toggledNameToUpdateLabel.setVisible(False)
         #Rob was here
+    else:
+        textbox.append("No customer found")
         
 def numberToUpdateAction():
     response = requests.get(api_url + "GetCustomerById/" + toggledNumberToUpdate.text(), verify=False)
@@ -300,6 +320,8 @@ def numberToUpdateAction():
         numberToUpdateGrabButton.setVisible(False)
         toggledNumberToUpdate.setVisible(False)
         toggledNumberToUpdateLabel.setVisible(False)
+    else:
+        textbox.append("No customer found")
     
 #Create instance of QApplication
 app = QApplication([])
