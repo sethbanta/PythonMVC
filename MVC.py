@@ -59,15 +59,18 @@ def getByNameAction():
 
 #Function to call a get by number request when the get by number button is clicked
 def getByNumberAction():
-    response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=False)
-    if(response.status_code == 200):
-        response = response.json()
-        #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
-        strReal = str(response)
-        splitOutput = strReal.split("'")
-        textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
+    if(len(numberInputBox.text()) != 10):
+        textbox.append('Phone number invalid, please try again')
     else:
-        textbox.append(f"No data found, or a bad request was sent. Please try again")
+        response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=False)
+        if(response.status_code == 200):
+            response = response.json()
+            #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
+            strReal = str(response)
+            splitOutput = strReal.split("'")
+            textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
+        else:
+            textbox.append(f"No data found, or a bad request was sent. Please try again")
 
 #Function to call a login request when the log in button is clicked
 #this is done by sending a get request with a guid
@@ -124,6 +127,7 @@ def showMasterControls():
 
 #Function to make update by name related fields visible for the user to make requests with  
 def updateByNameAction():
+    clearToggledText()
     hideToggledControls()
     hideControls()
     toggledNameToUpdate.setVisible(True)
@@ -132,6 +136,7 @@ def updateByNameAction():
 
 #Function to make update by number related fields visible for the user to make requests with
 def updateByNumberAction():
+    clearToggledText()
     hideToggledControls()
     hideControls()
     numberToUpdateGrabButton.setVisible(True)
@@ -160,56 +165,71 @@ def deleteUserAction():
 #Function to gather data from update related fields into json format then send a put request
 #if it is successful (204 -- No Content) then it lets the user know an update was performed
 def toggledUpdateByNameAction():
-    topost = {
-        "Name": toggledNameText.text(),
-        "PhoneNumber": int(toggledNumberText.text()),
-        "Age": int(toggledAgeText.text()),
-        "FavoritePizza": toggledPizzaText.text()
-        }
-    headers =  {"Content-Type":"application/json"}
-    response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=False)
-    #If we are returned no content, then the update SHOULD have applied
-    if(response.status_code == 204):
-        textbox.append("Updated")
-        hideControls()
-        toggledUpdateByNameButton.setVisible(False)
-        clearToggledText()
+    if(len(toggledNumberText.text()) != 10):
+        textbox.append('Phone number invalid, please try again')
+    elif(len(toggledAgeText.text()) != 2):
+        textbox.append('Age invalid, please try again')
+    else:
+        topost = {
+            "Name": toggledNameText.text(),
+            "PhoneNumber": int(toggledNumberText.text()),
+            "Age": int(toggledAgeText.text()),
+            "FavoritePizza": toggledPizzaText.text()
+            }
+        headers =  {"Content-Type":"application/json"}
+        response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=False)
+        #If we are returned no content, then the update SHOULD have applied
+        if(response.status_code == 204):
+            textbox.append("Updated")
+            hideControls()
+            toggledUpdateByNameButton.setVisible(False)
+            clearToggledText()
 
 #Function to gather data from update related fields into json format then send a put request
 #if it is successful (204 -- No Content) then it lets the user know an update was performed     
 def toggledUpdateByNumberAction():
-    topost = {
-        "Name": toggledNameText.text(),
-        "PhoneNumber": int(toggledNumberText.text()),
-        "Age": int(toggledAgeText.text()),
-        "FavoritePizza": toggledPizzaText.text()
-        }
-    headers =  {"Content-Type":"application/json"}
-    response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify=False)
-    #If we are returned no content, then the update SHOULD have applied
-    if(response.status_code == 204):
-        textbox.append("Updated")
-        hideControls()
-        toggledUpdateByNumberButton.setVisible(False)
-        clearToggledText()
+    if(len(toggledNumberText.text()) != 10):
+        textbox.append('Phone number invalid, please try again')
+    elif(len(toggledAgeText.text()) != 2):
+        textbox.append('Age invalid, please try again')
+    else:
+        topost = {
+            "Name": toggledNameText.text(),
+            "PhoneNumber": int(toggledNumberText.text()),
+            "Age": int(toggledAgeText.text()),
+            "FavoritePizza": toggledPizzaText.text()
+            }
+        headers =  {"Content-Type":"application/json"}
+        response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify=False)
+        #If we are returned no content, then the update SHOULD have applied
+        if(response.status_code == 204):
+            textbox.append("Updated")
+            hideControls()
+            toggledUpdateByNumberButton.setVisible(False)
+            clearToggledText()
 
 #Function to gather data from update related fields into json format then send a post request
 #if it is successful (201 -- Created) then it lets the user know an update was performed
 def toggledAddAction():
-    topost = {
-        "Name": toggledNameText.text(),
-        "PhoneNumber": int(toggledNumberText.text()),
-        "Age": int(toggledAgeText.text()),
-        "FavoritePizza": toggledPizzaText.text()
-        }
-    headers =  {"Content-Type":"application/json"}
-    response = requests.post(api_url + "NewCustomer", json=topost, verify=False)
-    #If we are returned 201, that means the content was created
-    if(response.status_code == 201):
-        textbox.append("Added")
-        hideControls()
-        toggledAddButton.setVisible(False)
-        clearToggledText()
+    if(len(toggledNumberText.text()) != 10):
+        textbox.append('Phone number invalid, please try again')
+    elif(len(toggledAgeText.text()) != 2):
+        textbox.append('Age invalid, please try again')
+    else:
+        topost = {
+            "Name": toggledNameText.text(),
+            "PhoneNumber": int(toggledNumberText.text()),
+            "Age": int(toggledAgeText.text()),
+            "FavoritePizza": toggledPizzaText.text()
+            }
+        headers =  {"Content-Type":"application/json"}
+        response = requests.post(api_url + "NewCustomer", json=topost, verify=False)
+        #If we are returned 201, that means the content was created
+        if(response.status_code == 201):
+            textbox.append("Added")
+            hideControls()
+            toggledAddButton.setVisible(False)
+            clearToggledText()
 
 #Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
@@ -309,23 +329,26 @@ def nameGrabAction():
         textbox.append("No customer found")
         
 def numberToUpdateAction():
-    response = requests.get(api_url + "GetCustomerById/" + toggledNumberToUpdate.text(), verify=False)
-    if(response.status_code == 200):
-        response = response.json()
-        #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
-        strReal = str(response)
-        splitOutput = strReal.split("'")
-        toggledNameText.setText(f'{splitOutput[3]}')
-        toggledNumberText.setText(f"{splitOutput[6].strip(': ,')}")
-        toggledAgeText.setText(f"{splitOutput[8].strip(': ,')}")
-        toggledPizzaText.setText(f'{splitOutput[11]}')
-        showControls()
-        toggledUpdateByNumberButton.setVisible(True)
-        numberToUpdateGrabButton.setVisible(False)
-        toggledNumberToUpdate.setVisible(False)
-        toggledNumberToUpdateLabel.setVisible(False)
+    if(len(toggledNumberToUpdate.text()) != 10):
+        textbox.append('Please enter a valid phone number')
     else:
-        textbox.append("No customer found")
+        response = requests.get(api_url + "GetCustomerById/" + toggledNumberToUpdate.text(), verify=False)
+        if(response.status_code == 200):
+            response = response.json()
+            #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
+            strReal = str(response)
+            splitOutput = strReal.split("'")
+            toggledNameText.setText(f'{splitOutput[3]}')
+            toggledNumberText.setText(f"{splitOutput[6].strip(': ,')}")
+            toggledAgeText.setText(f"{splitOutput[8].strip(': ,')}")
+            toggledPizzaText.setText(f'{splitOutput[11]}')
+            showControls()
+            toggledUpdateByNumberButton.setVisible(True)
+            numberToUpdateGrabButton.setVisible(False)
+            toggledNumberToUpdate.setVisible(False)
+            toggledNumberToUpdateLabel.setVisible(False)
+        else:
+            textbox.append("No customer found")
     
 #Create instance of QApplication
 app = QApplication([])
