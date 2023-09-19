@@ -253,6 +253,7 @@ def addUserAction():
 
 #Function to make delete user related fields visible for the user to make requests with
 def deleteUserAction():
+    clearToggledText()
     hideToggledControls()
     hideControls()
     toggledNameLabel.setVisible(True)
@@ -425,8 +426,58 @@ def nameGrabAction():
         toggledNameToUpdate.setVisible(False)
         toggledNameToUpdateLabel.setVisible(False)
         #Rob was here
-    else:
-        textbox.append("No customer found")
+    elif(response.status_code == 204):
+        textbox.append("Customer not found")
+        customers = []
+        toDisplay = []
+        isEmpty = True
+        response = requests.get(api_url + "GetAllCustomers", verify=False)
+        if(response.status_code == 200):
+            response = response.json()
+            #for each customer in the response, split by ' then append to the text box the information
+            #the phone number and age responses contain a : at the beginning and , at the end which is gets stripped
+            for customer in response:
+                strReal = str(customer)
+                splitOutput = strReal.split("'")
+                customers.append(splitOutput[3])
+                subbedName = splitOutput[3][0:len(toggledNameToUpdate.text())]
+                if(subbedName == toggledNameToUpdate.text()):
+                    #lolrob
+                    isEmpty = False
+                    toDisplay.append(splitOutput[3])
+        if(isEmpty == False):
+            #MessageBox = ctypes.windll.user32.MessageBoxW
+            #MessageBox(None, str(toDisplay), 'Potential matches', 0)
+            def copyFunc(text):
+                clippy.clipboard_clear()
+                clippy.clipboard_append(text)
+                toggledNameToUpdate.setText(text)
+                popup.close()
+            root = tk.Tk()
+            screen_width = root.winfo_screenwidth() / 2
+            screen_height = root.winfo_screenheight() / 2
+            clippy = tk.Tk()
+            clippy.withdraw()
+            popupWindow = QStackedLayout()
+            popup = QMainWindow()
+            popup.setGeometry(int(screen_width) - 400,int(screen_height) - 300,800,600)
+            popup.setWindowTitle("Potential matches")
+            i = 0
+            for match in toDisplay:
+                label = QLabel(popup)
+                label.setText(f'{match}')
+                label.move(50 + (100 * i),0)
+                text = label.text()
+                button = QPushButton(popup)
+                button.setText('Copy')
+                button.move(50 + (100 * i), 30)
+                button.clicked.connect(lambda ch, text=text: copyFunc(text))
+                i += 1
+            popupWindow.addWidget(popup)
+            popup.show()            
+        else:
+            MessageBox = ctypes.windll.user32.MessageBoxW
+            MessageBox(None, 'No potential matches found', 'Potential matches', 0)
         
 def numberToUpdateAction():
     if(len(toggledNumberToUpdate.text()) != 10):
