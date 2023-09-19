@@ -120,8 +120,57 @@ def getByNumberAction():
             strReal = str(response)
             splitOutput = strReal.split("'")
             textbox.append(f"{splitOutput[3]}, {splitOutput[6].strip(': ,')}, {splitOutput[8].strip(': ,')}, {splitOutput[11]}")
-        else:
-            textbox.append(f"No data found, or a bad request was sent. Please try again")
+        elif(response.status_code == 204):
+            textbox.append("Customer not found")
+            customers = []
+            toDisplay = []
+            isEmpty = True
+            response = requests.get(api_url + "GetAllCustomers", verify=False)
+            if(response.status_code == 200):
+                response = response.json()
+                #for each customer in the response, split by ' then append to the text box the information
+                #the phone number and age responses contain a : at the beginning and , at the end which is gets stripped
+                for customer in response:
+                    strReal = str(customer)
+                    splitOutput = strReal.split("'")
+                    strippedNumber = splitOutput[6].strip(': ,')
+                    customers.append(strippedNumber)
+                    subbedNumber = strippedNumber[0:5]
+                    if(subbedNumber == numberInputBox.text()[0:5]):
+                        #lolrob
+                        isEmpty = False
+                        toDisplay.append(strippedNumber)
+            if(isEmpty == False):
+                def copyFunc(text):
+                    clippy.clipboard_clear()
+                    clippy.clipboard_append(text)
+                    numberInputBox.setText(text)
+                    popup.close()
+                root = tk.Tk()
+                screen_width = root.winfo_screenwidth() / 2
+                screen_height = root.winfo_screenheight() / 2
+                clippy = tk.Tk()
+                clippy.withdraw()
+                popupWindow = QStackedLayout()
+                popup = QMainWindow()
+                popup.setGeometry(int(screen_width) - 400,int(screen_height) - 300,800,600)
+                popup.setWindowTitle("Potential matches")
+                i = 0
+                for match in toDisplay:
+                    label = QLabel(popup)
+                    label.setText(f'{match}')
+                    label.move(50 + (150 * i),0)
+                    text = label.text()
+                    button = QPushButton(popup)
+                    button.setText('Copy')
+                    button.move(50 + (150 * i), 30)
+                    button.clicked.connect(lambda ch, text=text: copyFunc(text))
+                    i += 1
+                popupWindow.addWidget(popup)
+                popup.show()            
+            else:
+                MessageBox = ctypes.windll.user32.MessageBoxW
+                MessageBox(None, 'No potential matches found', 'Potential matches', 0)
 
 #Function to call a login request when the log in button is clicked
 #this is done by sending a get request with a guid
