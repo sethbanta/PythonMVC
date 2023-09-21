@@ -331,6 +331,8 @@ def toggledAddAction():
             hideControls()
             toggledAddButton.setVisible(False)
             clearToggledText()
+        elif(response.status_code == 202):
+            textbox.append("Duplicate phone number detected, request denied")
 
 #Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
