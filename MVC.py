@@ -7,14 +7,17 @@ import requests
 import json
 import csv
 import ctypes
+import os
+import time
 
 api_url = "https://localhost:7180/customer/"
 letterRegEx = QRegExp("[a-z-A-Z_ ]*")
 letterValidator = QRegExpValidator(letterRegEx)
 numberRegEx = QRegExp("[0-9_]+")
 numberValidator = QRegExpValidator(numberRegEx)
-#Define action event for when the test button is clicked
-def testButtonAction():
+
+#Function used to test API connectivity
+def testAPI():
     #Send a get request to the API to get all customers, if the API is running and responds appropriately
     #we should receive a 200 response
     response = requests.get(api_url + "GetAllCustomers", verify=False)
@@ -31,6 +34,17 @@ def testButtonAction():
         loginText.setVisible(True)
         loginButton.setVisible(True)
         clearConsoleButton.setVisible(True)
+
+#Define action event for when the test button is clicked
+def testButtonAction():
+    try:
+        testAPI()
+    except:
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'API appears offline, click OK to begin launching...', 'API offline', 0)
+        os.popen("cd C:\\Users\\decay\\OneDrive\\Documents\\GitHub\\webAPIBuilding\\ContosoPizza & dotnet run")
+        time.sleep(5)
+        testAPI()
         
 #Function to call get all request when the get all button is clicked        
 def getAllButtonAction():
