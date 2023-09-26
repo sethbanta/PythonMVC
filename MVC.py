@@ -299,6 +299,8 @@ def toggledUpdateByNameAction():
             hideControls()
             toggledUpdateByNameButton.setVisible(False)
             clearToggledText()
+        elif(response.status_code == 202):
+            textbox.append("Phone number already exists with another customer")
 
 #Function to gather data from update related fields into json format then send a put request
 #if it is successful (204 -- No Content) then it lets the user know an update was performed     
@@ -322,6 +324,8 @@ def toggledUpdateByNumberAction():
             hideControls()
             toggledUpdateByNumberButton.setVisible(False)
             clearToggledText()
+        elif(response.status_code == 202):
+            textbox.append("Phone number already exists with another customer")
 
 #Function to gather data from update related fields into json format then send a post request
 #if it is successful (201 -- Created) then it lets the user know an update was performed
