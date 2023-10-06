@@ -15,12 +15,13 @@ letterRegEx = QRegExp("[a-z-A-Z_ ]*")
 letterValidator = QRegExpValidator(letterRegEx)
 numberRegEx = QRegExp("[0-9_]+")
 numberValidator = QRegExpValidator(numberRegEx)
+cert = 'C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer'
 
 #Function used to test API connectivity
 def testAPI():
     #Send a get request to the API to get all customers, if the API is running and responds appropriately
     #we should receive a 200 response
-    response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "GetAllCustomers", verify=cert)
     #if an OK response is received, show the rest of the controls
     if(response.status_code == 200):
         print(f'API running, show buttons')
@@ -48,7 +49,7 @@ def testButtonAction():
         
 #Function to call get all request when the get all button is clicked        
 def getAllButtonAction():
-    response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "GetAllCustomers", verify=cert)
     if(response.status_code == 200):
         response = response.json()
         #for each customer in the response, split by ' then append to the text box the information
@@ -61,7 +62,7 @@ def getAllButtonAction():
 
 #Function to call a get by name request when the get by name button is clicked    
 def getByNameAction():
-    response = requests.get(api_url + "GetCustomerByName/" + nameInputBox.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "GetCustomerByName/" + nameInputBox.text(), verify=cert)
     if(response.status_code == 200):
         response = response.json()
         #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
@@ -74,7 +75,7 @@ def getByNameAction():
         customers = []
         toDisplay = []
         isEmpty = True
-        response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.get(api_url + "GetAllCustomers", verify=cert)
         if(response.status_code == 200):
             response = response.json()
             #for each customer in the response, split by ' then append to the text box the information
@@ -89,8 +90,6 @@ def getByNameAction():
                     isEmpty = False
                     toDisplay.append(splitOutput[3])
         if(isEmpty == False):
-            #MessageBox = ctypes.windll.user32.MessageBoxW
-            #MessageBox(None, str(toDisplay), 'Potential matches', 0)
             def copyFunc(text):
                 clippy.clipboard_clear()
                 clippy.clipboard_append(text)
@@ -127,7 +126,7 @@ def getByNumberAction():
     if(len(numberInputBox.text()) != 10):
         textbox.append('Phone number invalid, please try again')
     else:
-        response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.get(api_url + "GetCustomerById/" + numberInputBox.text(), verify=cert)
         if(response.status_code == 200):
             response = response.json()
             #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
@@ -139,7 +138,7 @@ def getByNumberAction():
             customers = []
             toDisplay = []
             isEmpty = True
-            response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+            response = requests.get(api_url + "GetAllCustomers", verify=cert)
             if(response.status_code == 200):
                 response = response.json()
                 #for each customer in the response, split by ' then append to the text box the information
@@ -189,7 +188,7 @@ def getByNumberAction():
 #Function to call a login request when the log in button is clicked
 #this is done by sending a get request with a guid
 def loginButtonAction():
-    response = requests.get(api_url + "Login/" + loginText.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "Login/" + loginText.text(), verify=cert)
     if(response.status_code == 204):
         textbox.append(f"Login successful")
         loginButton.setVisible(False)
@@ -292,7 +291,7 @@ def toggledUpdateByNameAction():
             "FavoritePizza": toggledPizzaText.text()
             }
         headers =  {"Content-Type":"application/json"}
-        response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.put(api_url + "UpdateByNameFromMVC/" + toggledNameToUpdate.text(), json=topost, verify=cert)
         #If we are returned no content, then the update SHOULD have applied
         if(response.status_code == 204):
             textbox.append("Updated")
@@ -317,7 +316,7 @@ def toggledUpdateByNumberAction():
             "FavoritePizza": toggledPizzaText.text()
             }
         headers =  {"Content-Type":"application/json"}
-        response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.put(api_url + "UpdateByIdFromApp/" + toggledNumberToUpdate.text(), json=topost, verify=cert)
         #If we are returned no content, then the update SHOULD have applied
         if(response.status_code == 204):
             textbox.append("Updated")
@@ -342,7 +341,7 @@ def toggledAddAction():
             "FavoritePizza": toggledPizzaText.text()
             }
         headers =  {"Content-Type":"application/json"}
-        response = requests.post(api_url + "NewCustomer", json=topost, verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.post(api_url + "NewCustomer", json=topost, verify=cert)
         #If we are returned 201, that means the content was created
         if(response.status_code == 201):
             textbox.append("Added")
@@ -354,7 +353,7 @@ def toggledAddAction():
 
 #Function to send a delete request after gathering which name to delete
 def toggledDeleteAction():
-    response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.delete(api_url + "DeleteByName/" + toggledNameText.text(), verify=cert)
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
@@ -365,7 +364,7 @@ def toggledDeleteAction():
         
 #Function to send a delete request after gathering which number to delete
 def toggledDeleteNumberAction():
-    response = requests.delete(api_url + "DeleteById/" + toggledDeleteNumberText.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.delete(api_url + "DeleteById/" + toggledDeleteNumberText.text(), verify=cert)
     if(response.status_code == 204):
         textbox.append("Deleted")
         hideControls()
@@ -381,10 +380,10 @@ def toggledDeleteNumberAction():
 #exports a json file in the local directory where this program runs and where the API runs
 #basically server and client side
 def exportAction():
-    response = requests.get(api_url + "save", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "save", verify=cert)
     if(response.status_code == 204):
         textbox.append("Exported")
-    response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "GetAllCustomers", verify=cert)
     output = response.json()
     #BigRob was here also
     outputStr = str(output)
@@ -398,7 +397,7 @@ def exportAction():
     
 #Sends a request to the API to load information from JSON file into the API    
 def importAction():
-    response = requests.get(api_url + "import", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "import", verify=cert)
     if(response.status_code == 204):
         textbox.append("Imported")
 
@@ -430,7 +429,7 @@ def hideToggledControls():
     toggledNumberToUpdateLabel.setVisible(False)
     
 def nameGrabAction():
-    response = requests.get(api_url + "GetCustomerByName/" + toggledNameToUpdate.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+    response = requests.get(api_url + "GetCustomerByName/" + toggledNameToUpdate.text(), verify=cert)
     if(response.status_code == 200):
         response = response.json()
         #turn the response to a string then split by ' and remove : and , from age and phone number then send to text box
@@ -451,7 +450,7 @@ def nameGrabAction():
         customers = []
         toDisplay = []
         isEmpty = True
-        response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.get(api_url + "GetAllCustomers", verify=cert)
         if(response.status_code == 200):
             response = response.json()
             #for each customer in the response, split by ' then append to the text box the information
@@ -503,7 +502,7 @@ def numberToUpdateAction():
     if(len(toggledNumberToUpdate.text()) != 10):
         textbox.append('Please enter a valid phone number')
     else:
-        response = requests.get(api_url + "GetCustomerById/" + toggledNumberToUpdate.text(), verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+        response = requests.get(api_url + "GetCustomerById/" + toggledNumberToUpdate.text(), verify=cert)
         print(f'{response.status_code}')
         if(response.status_code == 200):
             response = response.json()
@@ -524,7 +523,7 @@ def numberToUpdateAction():
             customers = []
             toDisplay = []
             isEmpty = True
-            response = requests.get(api_url + "GetAllCustomers", verify='C:\\Users\\decay\\OneDrive\\Documents\\selfcert.cer')
+            response = requests.get(api_url + "GetAllCustomers", verify=cert)
             if(response.status_code == 200):
                 response = response.json()
                 #for each customer in the response, split by ' then append to the text box the information
